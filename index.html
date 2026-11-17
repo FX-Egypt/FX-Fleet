@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f766e">
+<title>سيارات الشركة</title>
+<style>
+:root{--bg:#f4f6f8;--ink:#1f2933;--muted:#6b7785;--brand:#0f766e;--bad:#dc2626;--line:#e2e8f0}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:18px;margin:0}
+header button{background:transparent;border:1px solid #fff8;color:#fff;border-radius:8px;padding:6px 10px}
+main{max-width:680px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px #0001}
+label{display:block;font-size:14px;color:var(--muted);margin:10px 0 4px}
+input,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;font-family:inherit}
+button.primary{width:100%;margin-top:16px;padding:14px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-size:17px}
+button.link{background:none;border:0;color:var(--brand);padding:8px 10px;font-size:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid .tile:last-child:nth-child(odd){grid-column:1/-1}
+.ocr-st{font-size:14px;margin:8px 0 0;min-height:0;color:#475569;line-height:1.7}
+.ocr-st.good{color:#166534}
+.chip{background:#ecfeff;border:1.5px solid #0f766e;color:#0f766e;border-radius:8px;padding:2px 12px;font-size:16px;font-weight:700;font-family:inherit;margin:0 4px}
+#odo.auto{border-color:#16a34a;background:#f0fdf4}
+.lt-row{display:flex;gap:10px;align-items:stretch}
+.lt-row input{flex:1;min-width:0}
+.ppl{min-width:116px;background:#f0fdfa;border:1.5px solid #99f6e4;border-radius:10px;padding:4px 10px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.ppl b{font-size:16px;color:#0f766e}
+.tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 8px;text-align:center;font-size:18px}
+.tile span{display:block;font-size:34px;margin-bottom:6px}
+.alert{border-radius:12px;padding:14px;margin-bottom:14px;font-weight:600}
+.ok{background:#dcfce7;color:#166534}.warn{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}
+.row{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.row:last-child{border:0}
+.muted{color:var(--muted);font-size:13px}
+.err{color:var(--bad);margin-top:10px;min-height:20px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photos img,.thumb{width:100%;border-radius:8px;margin-top:6px}
+.thumb{width:70px;margin:4px 4px 0 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 5px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+.info{background:#f0fdfa;border-radius:10px;padding:4px 12px;margin:8px 0}
+/* ===== شاشة الدخول ===== */
+body.auth{background:linear-gradient(165deg,#0a4f49 0%,#0f766e 48%,#14918a 100%);background-attachment:fixed;min-height:100vh}
+body.auth header{display:none}
+body.auth main{max-width:none;padding:0}
+.auth-wrap{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:28px 20px;max-width:440px;margin:0 auto}
+.brand{text-align:center;color:#fff;margin-bottom:26px}
+.logo{width:88px;height:88px;margin:0 auto 16px;border-radius:26px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.logo svg{width:50px;height:50px}
+.logo-badge{display:inline-block;background:#fff;border-radius:22px;padding:14px 20px;margin:0 auto 16px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.logo-badge img{display:block;max-width:100%;width:230px;max-height:90px;object-fit:contain}
+.logo-prev{background:#fff;border:1.5px dashed var(--line);border-radius:12px;padding:12px;text-align:center;margin:6px 0}
+.logo-prev img{max-width:100%;max-height:90px;object-fit:contain}
+.okmsg{font-size:14px;margin-top:10px;min-height:20px;color:#166534}
+.brand h1{font-size:26px;margin:0 0 6px;letter-spacing:.2px}
+.brand p{margin:0;opacity:.82;font-size:14.5px}
+.auth-card{background:#fff;border-radius:22px;padding:26px 22px 22px;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.auth-card h2{margin:0 0 4px;font-size:19px}
+.auth-card .sub{margin:0 0 6px;color:var(--muted);font-size:13.5px}
+.field{position:relative;margin-top:16px}
+.field label{margin:0 0 6px;font-size:13.5px;color:#475569;font-weight:600}
+.field input{height:52px;padding:0 46px;font-size:16px;background:#f8fafc;border:1.5px solid var(--line);border-radius:12px;transition:border-color .15s,box-shadow .15s,background .15s}
+.field input:focus{outline:0;border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(15,118,110,.14)}
+.field .ico{position:absolute;inset-inline-start:14px;bottom:15px;width:22px;height:22px;color:#94a3b8;pointer-events:none}
+.field input:focus ~ .ico{color:var(--brand)}
+.field .eye{position:absolute;inset-inline-end:6px;bottom:6px;width:40px;height:40px;border:0;background:none;color:#94a3b8;border-radius:10px;display:grid;place-items:center;padding:0}
+.field .eye svg{width:22px;height:22px}
+.auth-card .btn-main{width:100%;height:52px;margin-top:22px;border:0;border-radius:12px;background:linear-gradient(180deg,#14918a,#0f766e);color:#fff;font-size:17px;font-weight:700;font-family:inherit;box-shadow:0 8px 18px rgba(15,118,110,.35);transition:transform .08s,box-shadow .15s}
+.auth-card .btn-main:active{transform:translateY(1px);box-shadow:0 4px 10px rgba(15,118,110,.35)}
+.auth-card .err{text-align:center;font-size:14px;margin-top:14px;min-height:0}
+.auth-card .err:not(:empty){background:#fef2f2;border-radius:10px;padding:10px 12px;animation:shake .35s}
+.auth-card .err[style*="166534"]:not(:empty){background:#f0fdf4}
+@keyframes shake{20%{transform:translateX(6px)}40%{transform:translateX(-6px)}60%{transform:translateX(4px)}80%{transform:translateX(-3px)}}
+.auth-links{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:18px}
+.auth-links button{background:none;border:0;color:#d1fae5;font-size:14.5px;padding:8px 12px;font-family:inherit;border-radius:8px}
+.auth-links button:active{background:rgba(255,255,255,.12)}
+.auth-note{text-align:center;color:rgba(255,255,255,.65);font-size:12.5px;margin-top:10px}
+</style>
+</head>
+<body>
+<header><h1 id="title">سيارات الشركة</h1><button id="btnOut" hidden data-act="logout">خروج</button></header>
+<main id="app"></main>
+<input type="file" id="impFile" accept=".json,application/json" hidden>
+<input type="file" id="logoFile" accept="image/png,image/jpeg,image/webp" hidden>
+<input type="file" id="carsFile" accept=".xlsx,.xls,.csv,text/csv" hidden>
+
+<script>
+const KINDS={fuel:"وقود",oil:"غيار زيت",tires:"كاوتش",battery:"بطارية",maintenance:"صيانات أخرى"};
+/* أسماء العمليات كما تُرسل إلى Google Sheets (ثابتة حتى لا تتأثر معادلات الجدول) */
+const SHEET_KIND={fuel:"وقود",oil:"غيار زيت",tires:"كاوتش",battery:"بطارية",maintenance:"صيانة"};
+const ICON={fuel:"⛽",oil:"🛢️",tires:"🛞",battery:"🔋",maintenance:"🔧"};
+const DEFAULT_NAME="إدارة سيارات الشركة";
+const DEFAULT_LOGO="data:image/png;base64,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";   // شعار FX Fleet المدمج
+const OIL_KM=5000, WARN_KM=500;   // فاصل الزيت ومسافة التنبيه
+const TIRE_KM=40000, TIRE_WARN_KM=2000;   // العمر الافتراضي للكاوتش ومسافة التنبيه (عدّلهما كما تريد)
+
+let DB={cars:[],admin:null}, S={view:"login",carId:null,kind:null,msg:""}, P={car:null,pump:null};
+const $=s=>document.querySelector(s), val=id=>($("#"+id)?.value||"").trim();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+const toNum=v=>Number(String(v).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+const plateKey=p=>p.replace(/\s+/g,"").toLowerCase();
+const fmt=n=>Number(n||0).toLocaleString("ar-EG");
+const car=()=>DB.cars.find(c=>c.id===S.carId);
+/* آخر قراءة عداد مسجلة في أي شاشة (وقود / زيت / كاوتش) */
+/* السجلات المحذوفة تبقى كعلامة حذف (حتى تنتقل بين الأجهزة) لكنها لا تدخل في أي حساب */
+const live=c=>c.logs.filter(l=>!l.del);
+/* العداد الحالي وآخر تغيير زيت يُحسبان دائمًا من السجلات (حتى يظهر أثر التصحيح) */
+function recalc(c){let cur=Math.max(c.startOdo||0,c.baseOdo||0),oil=Math.max(c.startOdo||0,c.baseOil||0);
+  for(const l of live(c))if(l.odo>0){cur=Math.max(cur,l.odo);if(l.kind==="oil")oil=Math.max(oil,l.odo)}
+  c.curOdo=cur;c.lastOil=oil}
+function migrate(c){if(c.baseOdo!==undefined)return;let mx=c.startOdo||0,mo=c.startOdo||0;
+  for(const l of live(c))if(l.odo>0){mx=Math.max(mx,l.odo);if(l.kind==="oil")mo=Math.max(mo,l.odo)}
+  c.baseOdo=(c.curOdo||0)>mx?c.curOdo:0;c.baseOil=(c.lastOil||0)>mo?c.lastOil:0}
+const getLatestOdometerAnywhere=c=>Math.max(c.startOdo||0,c.curOdo||0,...live(c).map(l=>l.odo||0));
+const byOdo=(c,kind)=>live(c).filter(l=>l.kind===kind&&l.odo>0).sort((a,b)=>a.odo-b.odo||a.date.localeCompare(b.date));
+const lastOf=(c,kind)=>{const a=byOdo(c,kind);return a[a.length-1]||null};
+const oilLeft=c=>OIL_KM-(getLatestOdometerAnywhere(c)-(c.lastOil||0));
+/* متوسط الاستهلاك كم/لتر: المسافة بين تعبئتين ÷ لترات التعبئة اللاحقة */
+function fuelStats(c){const a=byOdo(c,"fuel");let km=0,lt=0,last=null;
+  for(let i=1;i<a.length;i++){const d=a[i].odo-a[i-1].odo;if(a[i].liters>0&&d>0){km+=d;lt+=a[i].liters;last=d/a[i].liters}}
+  return{avg:lt>0?km/lt:null,last}}
+function alertsFor(c){const out=[],now=getLatestOdometerAnywhere(c),left=oilLeft(c);
+  if(left<=0)out.push(["bad",`🚨 الزيت تجاوز موعد التغيير (${fmt(-left)} كم زيادة)`]);
+  else if(left<=WARN_KM)out.push(["warn",`🔔 الزيت يقترب من موعد التغيير (متبقي ${fmt(left)} كم)`]);
+  else out.push(["ok",`🛢️ متبقي ${fmt(left)} كم على غيار الزيت`]);
+  const t=lastOf(c,"tires");
+  if(t){const used=now-t.odo,rest=TIRE_KM-used;
+    if(rest<0)out.push(["bad",`🚨 الإطارات تجاوزت العمر الافتراضي (${fmt(-rest)} كم زيادة)`]);
+    else if(rest<=TIRE_WARN_KM)out.push(["warn",`🔔 الإطارات تقترب من نهاية عمرها (متبقي ${fmt(rest)} كم)`]);
+    else out.push(["ok",`🛞 الإطارات قطعت ${fmt(used)} كم منذ الشراء`])}
+  return out}
+function recRows(c,k){
+  const all=live(c).filter(l=>l.kind===k).sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+  const fa=k==="fuel"?byOdo(c,"fuel"):null;
+  return all.slice(0,10).map(l=>{const ex=[];
+    if(l.odo)ex.push(fmt(l.odo)+" كم");
+    if(k==="fuel"){const i=fa.indexOf(l);if(i>0){const d=l.odo-fa[i-1].odo;if(d>0){ex.push("قطع "+fmt(d)+" كم");if(l.liters>0)ex.push((d/l.liters).toFixed(1)+" كم/لتر")}}
+      if(l.liters){ex.push(l.liters+" لتر");ex.push((l.amount/l.liters).toFixed(2)+" ج/لتر")}}
+    if(l.count)ex.push(l.count+" كاوتش");if(l.note)ex.push(l.note);
+    return`<div class="row"><span>${esc(ex.join(" • "))}</span><span>${fmt(l.amount)} ج<br><span class="muted">${esc(l.date)}</span></span></div>`}).join("")||"<p class='muted'>لا توجد سجلات سابقة</p>"}
+
+/* ---------- التخزين على الجهاز (IndexedDB) ---------- */
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("cars-app",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function load(){try{const d=await idb();return await new Promise(res=>{const q=d.transaction("kv").objectStore("kv").get("db");q.onsuccess=()=>res(q.result||{cars:[],admin:null});q.onerror=()=>res({cars:[],admin:null})})}catch{return{cars:[],admin:null}}}
+async function save(){try{const d=await idb();await new Promise(res=>{const t=d.transaction("kv","readwrite");t.objectStore("kv").put(DB,"db");t.oncomplete=res;t.onerror=res})}catch{}}
+
+async function hash(s){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("cars:"+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch{let h=5381;for(const c of "cars:"+s)h=(h*33)^c.charCodeAt(0);return"x"+(h>>>0).toString(36)}}
+
+/* ---------- مكونات شاشة الدخول ---------- */
+const IC={
+ car:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2-5a2 2 0 0 1 1.9-1.3h10.2A2 2 0 0 1 19 7l2 5v5h-2"/><path d="M3 12h18"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+ eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+ eyeOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7c1.5 0 2.9-.3 4.1-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+ logo:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3v-5l2-5a2 2 0 0 1 1.9-1.3h10.2A2 2 0 0 1 19 7l2 5v5h-2"/><path d="M3 12h18"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>'};
+const brandName=()=>(DB.brand&&DB.brand.name)||DEFAULT_NAME;
+const brandLogo=()=>(DB.brand&&DB.brand.logo)||DEFAULT_LOGO;
+const brand=(t,sub)=>`<div class="brand"><div class="logo-badge"><img src="${esc(brandLogo())}" alt="${esc(brandName())}"></div><h1>${esc(t)}</h1><p>${esc(sub)}</p></div>`;
+const field=o=>`<div class="field"><label for="${o.id}">${o.label}</label>
+<input id="${o.id}" type="${o.type||"text"}" value="${esc(o.value||"")}" ${o.extra||""}>
+<span class="ico">${o.icon}</span>${o.pw?`<button type="button" class="eye" data-act="togglePass" data-for="${o.id}" aria-label="إظهار أو إخفاء">${IC.eye}</button>`:""}</div>`;
+const lastPlate=()=>{if(S.plate!=null)return S.plate;try{return localStorage.getItem("lastPlate")||""}catch{return""}};
+
+/* ---------- الواجهات ---------- */
+const V={
+login:()=>`<div class="auth-wrap">
+${brand(brandName(),"متابعة الوقود والزيت والإطارات والصيانة")}
+<div class="auth-card"><h2>تسجيل الدخول</h2><p class="sub">أدخل رقم لوحة السيارة والباسورد</p>
+${field({id:"plate",label:"رقم اللوحة",icon:IC.car,value:lastPlate(),extra:'autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"'})}
+${field({id:"pass",label:"الباسورد",icon:IC.lock,type:"password",pw:true,extra:'autocomplete="current-password"'})}
+<button class="btn-main" data-act="login">دخول</button>
+<div class="err" style="${S.good?"color:#166534":""}">${esc(S.msg)}</div></div>
+<div class="auth-links"><button data-act="goAdmin">دخول الإدارة</button><button data-act="importPick">استيراد ملف بيانات</button></div>
+<div class="auth-note">بياناتك محفوظة على هذا الجهاز</div></div>`,
+
+adminLogin:()=>`<div class="auth-wrap">
+${brand("لوحة الإدارة",DB.admin?"أدخل الرقم السري للمتابعة":"أول مرة: أنشئ رقمًا سريًا للإدارة")}
+<div class="auth-card"><h2>${DB.admin?"دخول الإدارة":"إنشاء رقم سري"}</h2><p class="sub">${DB.admin?"هذه الصفحة للمسؤولين فقط":"احفظه جيدًا، ولا يمكن استرجاعه إذا نسيته"}</p>
+${field({id:"pin",label:DB.admin?"الرقم السري":"الرقم السري الجديد (4 خانات على الأقل)",icon:IC.lock,type:"password",pw:true,extra:'autocomplete="current-password"'})}
+<button class="btn-main" data-act="${DB.admin?"adminEnter":"setPin"}">${DB.admin?"دخول":"حفظ ودخول"}</button>
+<div class="err">${esc(S.msg)}</div></div>
+<div class="auth-links"><button data-act="toLogin">← رجوع لدخول السائق</button></div></div>`,
+
+admin:()=>{
+const e=DB.cars.find(c=>c.id===S.editId)||{};
+const rows=DB.cars.map(c=>{const t=sums(c),left=oilLeft(c),tre=lastOf(c,"tires"),tUsed=tre?getLatestOdometerAnywhere(c)-tre.odo:null;
+const st=left<=0?"متأخر "+(-left):left<=WARN_KM?"قريب "+left:"متبقي "+left;
+return`<tr style="background:${left<=0?"#fee2e2":left<=WARN_KM?"#fef3c7":"none"}"><td>${esc(c.plate)}</td><td>${esc(c.driver||"")}</td><td>${esc(c.type)}</td><td>${esc(c.year||"")}</td><td>${fmt(getLatestOdometerAnywhere(c))}</td><td>${st}</td><td>${tUsed==null?"—":tUsed>TIRE_KM?"تجاوز "+fmt(tUsed-TIRE_KM):fmt(tUsed)}</td>
+<td>${fmt(t.fuel)}</td><td>${fmt(t.oil)}</td><td>${fmt(t.tires)}</td><td>${fmt(t.battery)}</td><td>${fmt(t.maintenance)}</td><td><b>${fmt(t.fuel+t.oil+t.tires+t.battery+t.maintenance)}</b></td>
+<td><button class="link" data-act="carLogs" data-id="${c.id}">السجلات</button><button class="link" data-act="editCar" data-id="${c.id}">تعديل</button><button class="link" data-act="carLink" data-id="${c.id}">رابط السائق</button><button class="link" data-act="carFile" data-id="${c.id}">إرسال ملف</button></td></tr>`}).join("");
+return`<div class="card"><h3>بيانات الشركة</h3>
+<label>اسم الشركة (يظهر في شاشة الدخول)</label><input id="b_name" value="${esc(DB.brand&&DB.brand.name)}" placeholder="${esc(DEFAULT_NAME)}">
+<label>الشعار</label><div class="logo-prev"><img id="b_prev" src="${esc(S.logoDraft===undefined?brandLogo():(S.logoDraft||DEFAULT_LOGO))}" alt=""></div>
+<button class="link" data-act="logoPick">رفع شعار جديد</button><button class="link" data-act="logoReset">استعادة الشعار الافتراضي</button>
+<button class="primary" data-act="saveBrand">حفظ بيانات الشركة</button><div class="okmsg" id="b_msg"></div></div>
+<div class="card"><h3>${e.id?"تعديل بيانات السيارة":"تسجيل سيارة جديدة"}</h3>
+<label>رقم اللوحة</label><input id="n_plate" value="${esc(e.plate)}">
+<label>نوع السيارة</label><input id="n_type" value="${esc(e.type)}">
+<label>اسم السائق</label><input id="n_driver" value="${esc(e.driver)}" autocomplete="off">
+<label>سنة الموديل</label><input id="n_year" type="number" inputmode="numeric" placeholder="مثال: 2022" value="${esc(e.year)}">
+<label>رقم الشاسيه</label><input id="n_chassis" value="${esc(e.chassis)}">
+<label>تاريخ انتهاء الرخصة</label><input id="n_exp" type="date" value="${esc(e.licExp)}">
+<label>عداد البداية (كم)</label><input id="n_odo" type="number" inputmode="numeric" value="${e.id?esc(e.startOdo):""}">
+<label>${e.id?"باسورد جديد (اتركه فارغًا للإبقاء على الحالي)":"باسورد السيارة"}</label><input id="n_pass">
+<button class="primary" data-act="saveCar">${e.id?"حفظ التعديلات":"تسجيل السيارة"}</button>
+${e.id?`<button class="link" data-act="cancelEdit">إلغاء التعديل</button>`:""}<div class="err">${esc(S.msg)}</div></div>
+<div class="card"><h3>السيارات</h3>${DB.cars.length?`<div class="scroll"><table><thead><tr><th>اللوحة</th><th>السائق</th><th>النوع</th><th>الموديل</th><th>العداد</th><th>الزيت</th><th>الإطارات (كم)</th><th>وقود</th><th>زيت</th><th>كاوتش</th><th>بطارية</th><th>صيانات أخرى</th><th>الإجمالي</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:"<p class='muted'>لا توجد سيارات بعد</p>"}</div>
+<div class="card"><button class="link" data-act="exportCsv">تصدير كل البيانات (Excel)</button>
+<button class="link" data-act="exportAll">نسخة احتياطية كاملة</button>
+<button class="link" data-act="importPick">استيراد بيانات من سائق</button></div>
+<div class="card"><h3>الاستقبال التلقائي (Google Sheets)</h3>
+<p class="muted">اربط التطبيق بجدول Google ليصلك كل ما يسجله السائقون تلقائيًا. بعد الحفظ أرسل للسائقين "رابط السائق" من جديد.</p>
+<label>رابط Web app</label><input id="s_url" placeholder="https://script.google.com/macros/s/..." value="${esc(DB.sync?.url)}">
+<label>الرمز السري (نفس الموجود في السكربت)</label><input id="s_secret" value="${esc(DB.sync?.secret)}">
+<button class="primary" data-act="saveSync">حفظ</button><button class="link" data-act="testSync">اختبار الاتصال</button></div>
+<div class="card"><h3>استيراد تعريفات السيارات من Excel</h3>
+<p class="muted">جهّز ملف Excel بأعمدة: اللوحة، النوع، سنة الموديل، رقم الشاسيه، تاريخ انتهاء الرخصة، عداد البداية، الباسورد. السيارة الموجودة (نفس اللوحة) تتحدّث بياناتها، والجديدة تُضاف.</p>
+<button class="link" data-act="carsTemplate">تحميل نموذج جاهز</button>
+<button class="link" data-act="carsPick">اختيار ملف Excel / CSV</button></div>`},
+
+home:()=>{const c=car(),fs=fuelStats(c);
+return`${alertsFor(c).map(a=>`<div class="alert ${a[0]}">${a[1]}</div>`).join("")}
+<div class="card">${c.driver?`<div class="row"><span>السائق</span><b>${esc(c.driver)}</b></div>`:""}<div class="row"><span>السيارة</span><b>${esc(c.type)}${c.year?" — "+esc(c.year):""}</b></div><div class="row"><span>العداد الحالي</span><b>${fmt(getLatestOdometerAnywhere(c))} كم</b></div>
+${fs.avg?`<div class="row"><span>متوسط الاستهلاك</span><b>${fs.avg.toFixed(1)} كم/لتر</b></div>`:""}
+<div class="row"><span>انتهاء الرخصة</span><b>${esc(c.licExp||"—")}</b></div></div>
+<div class="grid">${Object.keys(KINDS).map(k=>`<button class="tile" data-act="open" data-k="${k}"><span>${ICON[k]}</span>${KINDS[k]}</button>`).join("")}</div>
+<button class="link" data-act="history">عرض السجل</button>
+<button class="link" data-act="myFile">إرسال بياناتي للإدارة</button>
+${DB.sync?.url?`<div class="muted" style="margin-top:6px">${pending()?pending()+" عملية لم تُرسل بعد":"✓ كل العمليات وصلت للإدارة"}</div><button class="link" data-act="syncNow">إرسال الآن للإدارة</button>`:""}`},
+
+form:()=>{const k=S.kind,c=car(),now=getLatestOdometerAnywhere(c),pt=lastOf(c,"tires"),fs=fuelStats(c);
+const R=(a,b,x="")=>`<div class="row"><span>${a}</span><b ${x}>${b}</b></div>`;
+let info="";
+if(k==="fuel")info=R("آخر قراءة عداد",fmt(now)+" كم")+R("المسافة المقطوعة","—",'id="liveDist"')+R("الاستهلاك لهذه التعبئة","—",'id="liveCons"')+(fs.avg?R("متوسط الاستهلاك",fs.avg.toFixed(1)+" كم/لتر"):"");
+if(k==="oil"){const used=now-(c.lastOil||0);info=R("آخر قراءة عداد",fmt(now)+" كم")+R("آخر تغيير زيت عند",fmt(c.lastOil||0)+" كم")+R("المسافة منذ آخر تغيير",fmt(used)+" / "+fmt(OIL_KM)+" كم",used>=OIL_KM?'style="color:#dc2626"':"")}
+if(k==="tires"){const used=pt?now-pt.odo:0;info=R("آخر قراءة عداد",fmt(now)+" كم")+(pt?R("آخر شراء كاوتش عند",fmt(pt.odo)+" كم ("+esc(pt.date)+")")+R("المسافة منذ الشراء",fmt(used)+" / "+fmt(TIRE_KM)+" كم",used>TIRE_KM?'style="color:#dc2626"':""):R("آخر شراء كاوتش","لا يوجد سجل"))}
+if(k==="battery"){const pb=lastOf(c,"battery"),used=pb?now-pb.odo:0;info=R("آخر قراءة عداد",fmt(now)+" كم")+(pb?R("آخر تغيير بطارية عند",fmt(pb.odo)+" كم ("+esc(pb.date)+")")+R("المسافة منذ التغيير",fmt(used)+" كم"):R("آخر تغيير بطارية","لا يوجد سجل"))}
+return`<div class="card"><h2>${ICON[k]} ${KINDS[k]}</h2>
+${info?`<div class="info">${info}</div>`:""}
+${k==="fuel"?`<div class="photos"><div><label>صورة عداد السيارة</label><input type="file" id="phCar" accept="image/*" capture="environment"><img id="pvCar" hidden></div>
+<div><label>صورة عداد الطلمبة</label><input type="file" id="phPump" accept="image/*" capture="environment"><img id="pvPump" hidden></div></div><div class="ocr-st" id="ocr"></div>`:""}
+${k==="oil"||k==="tires"||k==="battery"?`<label>صورة عداد السيارة (لقراءة الرقم تلقائيًا)</label><input type="file" id="phCar" accept="image/*" capture="environment"><img id="pvCar" hidden><div class="ocr-st" id="ocr"></div>`:""}
+${k==="fuel"||k==="oil"||k==="tires"||k==="battery"?`<label>قراءة العداد الحالية (كم)</label><input id="odo" type="number" inputmode="numeric">`:""}
+${k==="fuel"?`<label>عدد اللترات (لحساب الاستهلاك وسعر اللتر)</label><div class="lt-row"><input id="liters" type="number" inputmode="decimal" step="0.01"><div class="ppl"><span class="muted">سعر اللتر</span><b id="livePPL">—</b></div></div>`:""}
+${k==="tires"?`<label>عدد الكاوتش</label><input id="count" type="number" inputmode="numeric">`:""}
+${k==="maintenance"?`<label>بيان الصيانة</label><textarea id="note" rows="3"></textarea>`:""}
+${k==="battery"?`<label>ملاحظات (اختياري: النوع / الضمان)</label><textarea id="note" rows="2"></textarea>`:""}
+<label>المبلغ (جنيه)</label><input id="amount" type="number" inputmode="decimal" step="0.01">
+<label>التاريخ</label><input id="date" type="date" value="${today()}">
+<button class="primary" data-act="saveLog">حفظ</button><button class="link" data-act="home">رجوع</button><div class="err">${esc(S.msg)}</div></div>
+<div class="card"><h3>السجلات السابقة — ${KINDS[k]}</h3>${recRows(c,k)}</div>`},
+
+adminLogs:()=>{const c=DB.cars.find(x=>x.id===S.logCar);if(!c)return V.admin();
+const L=live(c).sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+return`<div class="card"><h3>سجلات ${esc(c.plate)}${c.driver?" — "+esc(c.driver):""}</h3>
+<p class="muted">اضغط «تعديل» لتصحيح خطأ، أو «حذف» لإزالة سجل. لإيصال التصحيح للسائق ابعت له «إرسال ملف» وهو يستورده.</p>
+<div class="okmsg">${esc(S.msg)}</div>
+${L.length?L.map(l=>`<div class="row" style="align-items:flex-start"><span><b>${ICON[l.kind]} ${KINDS[l.kind]}</b><br><span class="muted">${esc([l.odo&&fmt(l.odo)+" كم",l.count&&l.count+" كاوتش",l.liters&&l.liters+" لتر",l.liters&&(l.amount/l.liters).toFixed(2)+" ج/لتر",l.note].filter(Boolean).join(" • "))}</span>
+${l.photoCar?`<br><img class="thumb" src="${l.photoCar}">`:""}${l.photoPump?`<img class="thumb" src="${l.photoPump}">`:""}</span>
+<span style="text-align:left;white-space:nowrap">${fmt(l.amount)} ج<br><span class="muted">${esc(l.date)}</span><br><button class="link" data-act="editLog" data-id="${l.id}">تعديل</button><button class="link" style="color:#dc2626" data-act="delLog" data-id="${l.id}">حذف</button></span></div>`).join(""):"<p class='muted'>لا توجد سجلات</p>"}
+<button class="link" data-act="backAdmin">← رجوع</button></div>`},
+
+editLog:()=>{const c=DB.cars.find(x=>x.id===S.logCar),l=c&&c.logs.find(x=>x.id===S.logId);if(!l)return V.admin();const k=l.kind;
+return`<div class="card"><h3>تعديل: ${ICON[k]} ${KINDS[k]} — ${esc(c.plate)}</h3>
+${["fuel","oil","tires","battery"].includes(k)?`<label>قراءة العداد (كم)</label><input id="e_odo" type="number" inputmode="numeric" value="${esc(l.odo)}">`:""}
+${k==="fuel"?`<label>عدد اللترات</label><input id="e_liters" type="number" inputmode="decimal" step="0.01" value="${esc(l.liters)}">`:""}
+${k==="tires"?`<label>عدد الكاوتش</label><input id="e_count" type="number" inputmode="numeric" value="${esc(l.count)}">`:""}
+${k==="maintenance"||k==="battery"?`<label>${k==="maintenance"?"بيان الصيانة":"ملاحظات"}</label><textarea id="e_note" rows="3">${esc(l.note)}</textarea>`:""}
+<label>المبلغ (جنيه)</label><input id="e_amount" type="number" inputmode="decimal" step="0.01" value="${esc(l.amount)}">
+<label>التاريخ</label><input id="e_date" type="date" value="${esc(l.date)}">
+<button class="primary" data-act="saveLogEdit">حفظ التعديل</button><button class="link" data-act="carLogs" data-id="${c.id}">إلغاء</button><div class="err"></div></div>`},
+
+history:()=>{const c=car(),L=live(c).sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+return`<div class="card"><h2>السجل</h2>${L.length?L.map(l=>`<div class="row"><span><b>${KINDS[l.kind]}</b><br><span class="muted">${esc([l.odo&&fmt(l.odo)+" كم",l.count&&l.count+" كاوتش",l.liters&&l.liters+" لتر",l.liters&&(l.amount/l.liters).toFixed(2)+" ج/لتر",l.note].filter(Boolean).join(" • "))}</span>
+${l.photoCar?`<br><img class="thumb" src="${l.photoCar}">`:""}${l.photoPump?`<img class="thumb" src="${l.photoPump}">`:""}</span>
+<span>${fmt(l.amount)} ج<br><span class="muted">${esc(l.date)}</span></span></div>`).join(""):"<p class='muted'>لا توجد عمليات بعد</p>"}
+<button class="link" data-act="home">رجوع</button></div>`}
+};
+const sums=c=>{const t={fuel:0,oil:0,tires:0,battery:0,maintenance:0};live(c).forEach(l=>{t[l.kind]=(t[l.kind]||0)+(l.amount||0)});return t};
+
+function render(){
+  const c=car();
+  const adm=["admin","adminLogs","editLog"].includes(S.view);
+  $("#title").textContent=adm?"لوحة الإدارة":c&&S.view!=="login"?c.plate:"سيارات الشركة";
+  $("#btnOut").hidden=!(adm||c);
+  document.body.classList.toggle("auth",S.view==="login"||S.view==="adminLogin");
+  document.title=brandName();
+  $("#app").innerHTML=V[S.view]();
+}
+const go=(view,msg="")=>{S.view=view;S.msg=msg;S.good=false;render()};
+
+/* تجهيز الشعار: تصغير + خلفية بيضاء */
+async function prepLogo(file){const b=await createImageBitmap(file),sc=Math.min(1,600/b.width,240/b.height),cv=document.createElement("canvas");
+  cv.width=Math.max(1,Math.round(b.width*sc));cv.height=Math.max(1,Math.round(b.height*sc));
+  const g=cv.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,cv.width,cv.height);g.drawImage(b,0,0,cv.width,cv.height);
+  let u=cv.toDataURL("image/png");if(u.length>250000)u=cv.toDataURL("image/jpeg",.85);return u}
+
+/* ---------- عرض مباشر: المسافة المقطوعة والاستهلاك ---------- */
+function updateLive(){
+  if(S.view!=="form"||S.kind!=="fuel")return;const dEl=$("#liveDist"),cEl=$("#liveCons");if(!dEl)return;
+  {const A=toNum(val("amount")),Lt=toNum(val("liters")),pe=$("#livePPL");if(pe)pe.textContent=(A>0&&Lt>0)?(A/Lt).toFixed(2)+" ج":"—"}
+  const c=car(),now=getLatestOdometerAnywhere(c),odo=toNum(val("odo")),L=toNum(val("liters"));
+  if(!(odo>0)){dEl.textContent="—";cEl.textContent="—";return}
+  const d=odo-now;dEl.textContent=d<0?"القراءة أقل من آخر قراءة!":fmt(d)+" كم";dEl.style.color=d<0?"#dc2626":"";
+  const pf=lastOf(c,"fuel"),fd=pf?odo-pf.odo:0;
+  cEl.textContent=(fd>0&&L>0)?(fd/L).toFixed(1)+" كم/لتر":"—"}
+document.addEventListener("input",e=>{if(e.target.id==="odo"||e.target.id==="liters"||e.target.id==="amount")updateLive()});
+
+/* ---------- الصور وقراءة الأرقام ---------- */
+async function compress(file){const b=await createImageBitmap(file),s=Math.min(1,640/b.width),cv=document.createElement("canvas");
+  cv.width=Math.round(b.width*s);cv.height=Math.round(b.height*s);cv.getContext("2d").drawImage(b,0,0,cv.width,cv.height);return cv.toDataURL("image/jpeg",.55)}
+/* ---------- قراءة رقم العداد من الصورة (OCR) ---------- */
+let tessLoad=null,tessWP=null;
+function loadTess(){return window.Tesseract?Promise.resolve(window.Tesseract):(tessLoad||(tessLoad=new Promise((ok,no)=>{
+  const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  sc.onload=()=>ok(window.Tesseract);sc.onerror=()=>{tessLoad=null;no(new Error("load"))};document.head.appendChild(sc)})))}
+function getWorker(){return tessWP||(tessWP=(async()=>{const T=await loadTess(),w=await T.createWorker("eng");
+  await w.setParameters({tessedit_char_whitelist:"0123456789.",tessedit_pageseg_mode:"11"});return w})().catch(e=>{tessWP=null;throw e}))}
+/* تجهيز الصورة: تصغير + تدرج رمادي + تباين تلقائي (وعكس الألوان عند الحاجة للأرقام الفاتحة على خلفية داكنة) */
+async function ocrCanvas(file,invert){const b=await createImageBitmap(file),sc=Math.min(1,1400/Math.max(b.width,b.height)),cv=document.createElement("canvas");
+  cv.width=Math.round(b.width*sc);cv.height=Math.round(b.height*sc);const g=cv.getContext("2d");g.drawImage(b,0,0,cv.width,cv.height);
+  const im=g.getImageData(0,0,cv.width,cv.height),d=im.data,n=cv.width*cv.height,h=new Uint32Array(256);
+  for(let i=0;i<n;i++){const y=(d[4*i]*299+d[4*i+1]*587+d[4*i+2]*114)/1000|0;d[4*i]=y;h[y]++}
+  let c=0,lo=0,hi=255;for(let v=0;v<256;v++){c+=h[v];if(c>=n*.02){lo=v;break}}c=0;for(let v=255;v>=0;v--){c+=h[v];if(c>=n*.02){hi=v;break}}
+  const span=Math.max(1,hi-lo);
+  for(let i=0;i<n;i++){let y=Math.max(0,Math.min(255,(d[4*i]-lo)*255/span));if(invert)y=255-y;d[4*i]=d[4*i+1]=d[4*i+2]=y;d[4*i+3]=255}
+  g.putImageData(im,0,0);return cv}
+/* اختيار رقم العداد من الكلمات المقروءة: 3–7 خانات، لا يقل عن آخر قراءة ولا يزيد عنها بأكثر من 15000 كم، الأكبر حجمًا أولًا */
+const ODO_MAX_JUMP=15000;
+function odoCandidates(words,now){const out=[];
+  for(const w of words){const t=String(w.text||"").replace(/[^0-9.]/g,""),m=t.match(/^(\d{3,7})(\.\d+)?$/);if(!m)continue;
+    const v=+m[1],ok=v>=now&&(now>0?v<=now+ODO_MAX_JUMP:true);if(!ok)continue;
+    out.push({v,dec:m[2]?1:0,h:w.bbox?Math.abs(w.bbox.y1-w.bbox.y0):0,conf:w.confidence||0})}
+  return out.sort((a,b)=>a.dec-b.dec||b.h-a.h||b.conf-a.conf)}
+async function readOdometer(file){const w=await getWorker(),now=getLatestOdometerAnywhere(car());
+  for(const inv of [false,true]){const {data}=await w.recognize(await ocrCanvas(file,inv));
+    const words=(data.words&&data.words.length)?data.words:(String(data.text||"").match(/\d+(\.\d+)?/g)||[]).map(t=>({text:t,confidence:0}));
+    const c=odoCandidates(words,now);if(c.length)return c}
+  return[]}
+function fillOdo(v){const el=$("#odo");if(!el)return;el.value=v;el.classList.add("auto");updateLive()}
+async function ocrOdo(file){const st=$("#ocr");if(!st)return;st.className="ocr-st";
+  if(!navigator.onLine){st.textContent="القراءة التلقائية تحتاج إنترنت، اكتب الرقم يدويًا";return}
+  st.textContent="جاري قراءة العداد… (أول مرة قد تستغرق وقتًا أطول)";
+  try{const c=await readOdometer(file);if(S.view!=="form"||!$("#ocr"))return;const top=c[0],now=getLatestOdometerAnywhere(car());
+    if(top&&top.conf>=75){fillOdo(top.v);st.className="ocr-st good";st.innerHTML="✓ تمت قراءة العداد: <b>"+fmt(top.v)+"</b> — راجع الرقم قبل الحفظ"}
+    else if(top&&top.conf>=35)st.innerHTML=`الصورة غير واضحة تمامًا. هل القراءة <button type="button" class="chip" data-act="useOdo" data-v="${top.v}">${fmt(top.v)}</button>؟ أو اكتبها يدويًا`;
+    else st.textContent="لم أستطع قراءة العداد بوضوح (يجب أن يكون الرقم "+fmt(now)+" أو أكبر). صوّر من قريب وبإضاءة جيدة أو اكتبه يدويًا"}
+  catch{if($("#ocr"))$("#ocr").textContent="تعذرت القراءة التلقائية (تحتاج إنترنت). اكتب الرقم يدويًا"}}
+
+document.addEventListener("change",async e=>{
+  const t=e.target;
+  if(t.id==="phCar"||t.id==="phPump"){const f=t.files[0];if(!f)return;const isCar=t.id==="phCar";
+    P[isCar?"car":"pump"]=await compress(f);const pv=$(isCar?"#pvCar":"#pvPump");pv.src=P[isCar?"car":"pump"];pv.hidden=false;
+    if(isCar)ocrOdo(f)}   // صورة الطلمبة تُحفظ كإثبات فقط (تعرض عدة أرقام فلا تُعبّأ تلقائيًا)
+  if(t.id==="logoFile"){const f=t.files[0];if(!f)return;
+    try{S.logoDraft=await prepLogo(f);$("#b_prev").src=S.logoDraft;$("#b_msg").textContent="اضغط «حفظ بيانات الشركة» لتثبيت الشعار"}
+    catch{alert("تعذر قراءة الصورة. استخدم ملف PNG أو JPG")}
+    t.value=""}
+  if(t.id==="impFile"){const f=t.files[0];if(!f)return;try{const inc=JSON.parse(await f.text());const n=merge(inc);await save();t.value="";
+    alert("تم الاستيراد: "+n+" عنصر جديد");render()}catch{alert("الملف غير صالح")}}
+  if(t.id==="carsFile"){const f=t.files[0];if(!f)return;const isX=/\.xlsx?$/i.test(f.name);let msg;
+    try{let rows;
+      if(isX){await loadXLSX();const wb=XLSX.read(await f.arrayBuffer(),{type:"array",cellDates:true});
+        rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:"",dateNF:"yyyy-mm-dd"})}
+      else rows=parseCSV(await f.text());
+      msg=await importCars(rows)}
+    catch{msg=isX?"تعذر قراءة ملف Excel (يحتاج إنترنت أول مرة). احفظه كـ CSV وجرب مرة أخرى":"الملف غير صالح"}
+    t.value="";alert(msg);render()}
+});
+
+/* ---------- استيراد تعريفات السيارات من Excel / CSV ---------- */
+const dig=v=>String(v??"").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).trim();
+const HDR={plate:["اللوحة","رقم اللوحة"],type:["النوع","نوع السيارة"],driver:["اسم السائق","السائق"],year:["سنة الموديل","الموديل"],chassis:["رقم الشاسيه","الشاسيه"],exp:["تاريخ انتهاء الرخصة","انتهاء الرخصة"],odo:["عداد البداية","العداد"],pass:["الباسورد","باسورد","كلمة السر"]};
+function loadXLSX(){return window.XLSX?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function parseCSV(t){t=t.replace(/^﻿/,"");const first=t.split("\n")[0];
+  const d=[",",";","\t"].map(x=>[x,first.split(x).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const rows=[];let r=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;
+    else if(c===d){r.push(f);f=""}
+    else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;r.push(f);f="";rows.push(r);r=[]}
+    else f+=c}
+  if(f!==""||r.length){r.push(f);rows.push(r)}return rows}
+function isoDate(v){v=dig(v);let m=v.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if(m)return`${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+  m=v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/);return m?`${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`:""}
+async function importCars(rows){
+  rows=rows.filter(r=>r.some(c=>String(c??"").trim()));if(rows.length<2)return"الملف فارغ";
+  const head=rows[0].map(h=>String(h??"").trim()),col={};
+  for(const k in HDR)col[k]=head.findIndex(h=>HDR[k].includes(h));
+  if(col.plate<0||col.type<0)return"لم أجد عمودي «اللوحة» و«النوع» في الصف الأول";
+  let added=0,updated=0;const bad=[];
+  for(let i=1;i<rows.length;i++){
+    const g=k=>col[k]<0?"":String(rows[i][col[k]]??"").trim();
+    const plate=g("plate"),type=g("type");if(!plate||!type){bad.push(i+1);continue}
+    const year=dig(g("year")),odoTxt=dig(g("odo")),exp=isoDate(g("exp")),chassis=g("chassis"),pass=g("pass"),driver=g("driver");
+    const e=DB.cars.find(c=>c.key===plateKey(plate));
+    if(e){e.type=type;if(driver)e.driver=driver;if(year)e.year=year;if(chassis)e.chassis=chassis;if(exp)e.licExp=exp;
+      if(odoTxt!==""){e.startOdo=toNum(odoTxt)||0;recalc(e)}
+      if(pass){if(pass.length<4){bad.push(i+1);continue}e.pass=await hash(pass)}
+      updated++}
+    else{if(pass.length<4){bad.push(i+1);continue}
+      const odo=toNum(odoTxt)||0;
+      DB.cars.push({id:uid(),key:plateKey(plate),plate,type,driver,year,chassis,licExp:exp,startOdo:odo,curOdo:odo,lastOil:odo,pass:await hash(pass),logs:[]});added++}}
+  await save();
+  return`تمت إضافة ${added} سيارة وتحديث ${updated}`+(bad.length?`\nتم تخطي الصفوف: ${bad.join("، ")} (بيانات ناقصة أو الباسورد أقل من 4 أحرف)`:"")}
+
+/* ---------- التصدير والاستيراد ---------- */
+async function sendFile(name,text,type){const f=new File([text],name,{type});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:name});return}catch(e){if(e.name==="AbortError")return}}
+  const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=name;a.click()}
+const strip=c=>({...c,logs:c.logs});
+function csv(cars){const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';const r=[["اللوحة","السائق","النوع","الموديل","العملية","التاريخ","العداد","المبلغ","العدد","البيان","لترات","سعر اللتر"]];
+  cars.forEach(c=>live(c).sort((a,b)=>a.date.localeCompare(b.date)).forEach(l=>r.push([c.plate,c.driver||"",c.type,c.year||"",KINDS[l.kind],l.date,l.odo||"",l.amount,l.count||"",l.note||"",l.liters||"",l.liters?+(l.amount/l.liters).toFixed(2):""])));
+  return"﻿"+r.map(x=>x.map(q).join(",")).join("\n")}
+function merge(inc){let n=0;for(const c of inc.cars||[]){const m=DB.cars.find(x=>x.key===c.key);
+  if(!m){c.logs=c.logs||[];migrate(c);DB.cars.push(c);recalc(c);n+=live(c).length;continue}
+  const by=new Map(m.logs.map(l=>[l.id,l]));
+  for(const l of c.logs||[]){const x=by.get(l.id);
+    if(!x){m.logs.push(l);n++}
+    else if((l.rev||0)>(x.rev||0)){m.logs[m.logs.indexOf(x)]=l;n++}}   // نسخة أحدث (تصحيح أو حذف)
+  recalc(m)}
+  if(!DB.admin&&inc.admin)DB.admin=inc.admin;
+  if(inc.fromAdmin&&inc.brand&&(inc.brand.name||inc.brand.logo)&&JSON.stringify(inc.brand)!==JSON.stringify(DB.brand||null)){DB.brand=inc.brand;n++}
+  return n}
+
+/* ---------- الأوامر ---------- */
+const A={
+async login(){const k=plateKey(val("plate")),h=await hash(val("pass"));const c=DB.cars.find(x=>x.key===k&&x.pass===h);
+  S.plate=val("plate");
+  if(!c)return go("login",DB.cars.length?"رقم اللوحة أو الباسورد غير صحيح":"لا توجد بيانات سيارات على هذا الجهاز. افتح رابط السيارة الذي أرسلته لك الإدارة أولًا");S.carId=c.id;try{localStorage.setItem("lastPlate",c.plate)}catch{}go("home")},
+logout(){S.carId=null;go("login")},
+toLogin(){go("login")},
+togglePass(a){const i=document.getElementById(a.dataset.for),show=i.type==="password";i.type=show?"text":"password";a.innerHTML=show?IC.eyeOff:IC.eye}, goAdmin(){go("adminLogin")}, home(){go("home")}, history(){go("history")},
+async setPin(){const p=val("pin");if(p.length<4)return go("adminLogin","الرقم السري 4 خانات على الأقل");DB.admin=await hash(p);await save();go("admin")},
+async adminEnter(){if(await hash(val("pin"))!==DB.admin)return go("adminLogin","الرقم السري غير صحيح");go("admin")},
+async saveCar(){const plate=val("n_plate"),pass=val("n_pass"),e=DB.cars.find(c=>c.id===S.editId);
+  const fail=m=>go2(m);   // يعرض الخطأ دون مسح ما كُتب في الحقول
+  if(!plate||!val("n_type")||!val("n_chassis"))return fail("أكمل البيانات الأساسية");
+  const year=val("n_year");if(year&&!(toNum(year)>=1950&&toNum(year)<=2100))return fail("سنة الموديل غير صحيحة");
+  if(DB.cars.some(c=>c.key===plateKey(plate)&&c!==e))return fail("اللوحة مسجلة بالفعل");
+  const odo=toNum(val("n_odo"))||0;
+  const f={key:plateKey(plate),plate,type:val("n_type"),driver:val("n_driver"),year:year?String(toNum(year)):"",chassis:val("n_chassis"),licExp:val("n_exp"),startOdo:odo};
+  if(e){
+    if(pass){if(pass.length<4)return fail("الباسورد 4 أحرف على الأقل");f.pass=await hash(pass)}
+    Object.assign(e,f);delete e.licNo;
+    recalc(e)
+    S.editId=null;
+  }else{
+    if(pass.length<4)return fail("الباسورد 4 أحرف على الأقل");
+    DB.cars.push({id:uid(),...f,pass:await hash(pass),curOdo:odo,lastOil:odo,logs:[]});
+  }
+  await save();go("admin")},
+editCar(a){S.editId=a.dataset.id;go("admin");window.scrollTo(0,0)},
+cancelEdit(){S.editId=null;go("admin")},
+open(a){S.kind=a.dataset.k;P={car:null,pump:null};go("form")},
+async saveLog(){const c=car(),k=S.kind,amount=toNum(val("amount")),date=val("date"),odo=toNum(val("odo"));
+  if(!(amount>0))return go2("اكتب المبلغ");if(!date)return go2("اختر التاريخ");
+  const l={id:uid(),kind:k,date,amount,rev:Date.now()};
+  const now=getLatestOdometerAnywhere(c);
+  if(k==="fuel"||k==="oil"||k==="tires"||k==="battery"){if(!(odo>0))return go2("اكتب قراءة العداد");if(odo<now)return go2("القراءة أقل من آخر عداد مسجل ("+fmt(now)+")");l.odo=odo}
+  if(k==="fuel"&&val("liters")){const L=toNum(val("liters"));if(!(L>0))return go2("عدد اللترات غير صحيح");l.liters=L}
+  if(k==="tires"){const n=toNum(val("count"));if(!(n>0))return go2("اكتب عدد الكاوتش");l.count=n}
+  if(k==="battery"&&val("note"))l.note=val("note");
+  if(k==="maintenance"){if(!val("note"))return go2("اكتب بيان الصيانة");l.note=val("note")}
+  if(P.car)l.photoCar=P.car;if(k==="fuel"&&P.pump)l.photoPump=P.pump
+  c.logs.push(l);recalc(c);await save();go("home");flush().then(n=>{if(n&&S.view==="home")render()})},
+exportCsv(){sendFile("cars-"+today()+".csv",csv(DB.cars),"text/csv")},
+exportAll(){sendFile("cars-backup-"+today()+".json",JSON.stringify(DB),"application/json")},
+myFile(){sendFile("car-"+car().key+"-"+today()+".json",JSON.stringify({cars:[car()]}),"application/json")},
+carFile(a){const c=DB.cars.find(x=>x.id===a.dataset.id);sendFile("car-"+c.key+".json",JSON.stringify({cars:[c],brand:DB.brand||null,fromAdmin:true}),"application/json")},
+importPick(){$("#impFile").click()},
+async carLink(a){const c=DB.cars.find(x=>x.id===a.dataset.id);
+  const d={key:c.key,plate:c.plate,type:c.type,driver:c.driver||"",year:c.year||"",chassis:c.chassis||"",licExp:c.licExp||"",startOdo:c.startOdo||0,curOdo:c.curOdo||0,lastOil:c.lastOil||0,pass:c.pass,sync:DB.sync||null,brand:(DB.brand&&DB.brand.name)?{name:DB.brand.name}:null};
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  const url=location.href.split("#")[0]+"#car="+b64;
+  if(navigator.share){try{await navigator.share({title:"سيارة "+c.plate,text:"رابط تطبيق سيارتك ("+c.plate+") — افتحه مرة واحدة ثم ادخل برقم اللوحة والباسورد",url});return}catch(e){if(e.name==="AbortError")return}}
+  try{await navigator.clipboard.writeText(url);alert("تم نسخ رابط السائق، الصقه في واتساب")}catch{prompt("انسخ هذا الرابط وابعته للسائق:",url)}},
+carsPick(){$("#carsFile").click()},
+carLogs(a){if(a.dataset.id)S.logCar=a.dataset.id;go("adminLogs");window.scrollTo(0,0)},
+backAdmin(){go("admin")},
+editLog(a){S.logId=a.dataset.id;go("editLog");window.scrollTo(0,0)},
+async saveLogEdit(){const c=DB.cars.find(x=>x.id===S.logCar),l=c&&c.logs.find(x=>x.id===S.logId);if(!l)return;const k=l.kind;
+  const amount=toNum(val("e_amount")),date=val("e_date");
+  if(!(amount>0))return go2("اكتب المبلغ");if(!date)return go2("اختر التاريخ");
+  const n={};
+  if(["fuel","oil","tires","battery"].includes(k)){const o=toNum(val("e_odo"));if(!(o>0))return go2("اكتب قراءة العداد");n.odo=o}
+  if(k==="fuel"){const t=val("e_liters");if(t){const L=toNum(t);if(!(L>0))return go2("عدد اللترات غير صحيح");n.liters=L}else n.liters=undefined}
+  if(k==="tires"){const q=toNum(val("e_count"));if(!(q>0))return go2("اكتب عدد الكاوتش");n.count=q}
+  if(k==="maintenance"){if(!val("e_note"))return go2("اكتب بيان الصيانة");n.note=val("e_note")}
+  if(k==="battery")n.note=val("e_note")||undefined;
+  const was=!!l.synced;Object.assign(l,{amount,date},n);for(const f of["liters","note"])if(l[f]===undefined)delete l[f];
+  l.rev=Date.now();l.upd=was||!!l.upd;l.synced=false;recalc(c);await save();flush();
+  go("adminLogs","تم حفظ التعديل ✓")},
+async delLog(a){const c=DB.cars.find(x=>x.id===S.logCar),l=c&&c.logs.find(x=>x.id===a.dataset.id);if(!l)return;
+  if(!confirm("حذف هذا السجل؟ سيختفي من التقارير والإجماليات."))return;
+  const was=!!l.synced;l.del=true;l.rev=Date.now();l.upd=was||!!l.upd;l.synced=false;recalc(c);await save();flush();
+  go("adminLogs","تم الحذف ✓")},
+useOdo(a){fillOdo(a.dataset.v);const st=$("#ocr");if(st){st.className="ocr-st good";st.textContent="تم تعبئة الرقم — راجعه قبل الحفظ"}},
+logoPick(){$("#logoFile").click()},
+logoReset(){S.logoDraft="";$("#b_prev").src=DEFAULT_LOGO;$("#b_msg").textContent="اضغط «حفظ بيانات الشركة» لتثبيت الشعار الافتراضي"},
+async saveBrand(){const name=val("b_name");const b={name,logo:S.logoDraft===undefined?(DB.brand&&DB.brand.logo)||"":S.logoDraft};
+  DB.brand=b;S.logoDraft=undefined;await save();document.title=brandName();$("#b_msg").textContent="تم الحفظ ✓ — لإرسال الاسم للسائقين: ابعت «رابط السائق» من جديد، وللشعار الجديد استخدم «إرسال ملف»"},
+async syncNow(){if(!navigator.onLine)return alert("لا يوجد إنترنت الآن");const n=await flush();alert(pending()?"تعذر إرسال "+pending()+" عملية، حاول لاحقًا":"تم إرسال كل العمليات ✓");render()},
+async saveSync(){const url=val("s_url"),secret=val("s_secret");
+  if(!url.startsWith("https://script.google.com/"))return alert("الرابط يجب أن يبدأ بـ https://script.google.com/");
+  DB.sync={url,secret};await save();alert("تم الحفظ. أرسل «رابط السائق» للسائقين من جديد ليصلهم الإعداد");render()},
+async testSync(){const url=val("s_url"),secret=val("s_secret");
+  try{const r=await fetch(url,{method:"POST",body:JSON.stringify({secret,ping:true})});const j=await r.json();
+    alert(j.ok?"الاتصال يعمل ✓":"الاتصال وصل لكن الرمز السري غير مطابق")}
+  catch{alert("تعذر الاتصال. تأكد من الرابط ومن أن النشر على «Anyone»")}},
+carsTemplate(){sendFile("cars-template.csv","﻿"+["اللوحة,اسم السائق,النوع,سنة الموديل,رقم الشاسيه,تاريخ انتهاء الرخصة,عداد البداية,الباسورد","أ ب ج 1234,أحمد محمد,تويوتا هايلكس,2022,ABC123456789,2027-06-30,15000,1234"].join("\n"),"text/csv")}
+};
+const go2=m=>{$("#app").querySelector(".err").textContent=m};
+document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;const id=e.target.id;
+  if(id==="plate"||id==="pass")A.login();else if(id==="pin")(DB.admin?A.adminEnter:A.setPin)()});
+document.addEventListener("click",e=>{const a=e.target.closest("[data-act]");if(a)A[a.dataset.act]?.(a)});
+
+/* ---------- الإرسال التلقائي إلى Google Sheets ---------- */
+const pending=()=>DB.cars.reduce((s,c)=>s+c.logs.filter(l=>!l.synced).length,0);   // تشمل علامات الحذف
+let flushing=false;
+async function flush(){
+  if(!DB.sync?.url||!navigator.onLine||flushing)return 0;flushing=true;let n=0;
+  try{for(const c of DB.cars)for(const l of c.logs){if(l.synced)continue;
+    const r=await fetch(DB.sync.url,{method:"POST",body:JSON.stringify({secret:DB.sync.secret,id:l.id,plate:c.plate,type:c.type,driver:c.driver||"",
+      kind:SHEET_KIND[l.kind]||KINDS[l.kind],date:l.date,odo:l.odo||"",amount:l.amount,count:l.count||"",liters:l.liters||"",note:l.note||"",rev:l.rev||0,del:!!l.del,photoCar:(l.upd||l.del)?"":(l.photoCar||""),photoPump:(l.upd||l.del)?"":(l.photoPump||"")})});
+    const j=await r.json();if(!j.ok)break;l.synced=true;n++}}
+  catch{}
+  flushing=false;if(n)await save();return n}
+window.addEventListener("online",()=>flush().then(n=>{if(n&&S.view==="home")render()}));
+
+/* فتح رابط السائق: يجهّز السيارة على هذا الجهاز تلقائيًا */
+async function applyCarLink(c){
+  if(!c||!c.key||!c.plate||!c.pass)throw 0;
+  if(c.sync&&c.sync.url)DB.sync=c.sync;delete c.sync;
+  if(c.brand&&c.brand.name)DB.brand={...(DB.brand||{}),name:c.brand.name};delete c.brand;
+  const e=DB.cars.find(x=>x.key===c.key);
+  if(e){Object.assign(e,{plate:c.plate,type:c.type,driver:c.driver||e.driver||"",year:c.year,chassis:c.chassis,licExp:c.licExp,startOdo:c.startOdo,pass:c.pass});
+    e.baseOdo=c.curOdo||0;e.baseOil=c.lastOil||0;recalc(e)}
+  else{const n={...c,id:uid(),logs:[],baseOdo:c.curOdo||0,baseOil:c.lastOil||0};recalc(n);DB.cars.push(n)}
+  await save()}
+load().then(async d=>{DB=d;DB.cars.forEach(migrate);
+  const m=location.hash.match(/^#car=(.+)$/);
+  if(m){try{const c=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));
+      await applyCarLink(c);S.msg="تم تجهيز السيارة "+c.plate+" — ادخل برقم اللوحة والباسورد";S.good=true;
+      history.replaceState(null,"",location.pathname+location.search)}
+    catch{S.msg="الرابط غير صالح، اطلب رابطًا جديدًا من الإدارة"}}
+  render();
+  flush().then(n=>{if(n&&S.view==="home")render()})});
+</script>
+</body>
+</html>
